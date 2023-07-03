@@ -14,6 +14,8 @@ public interface TendencyRepository extends JpaRepository<Tendency, Long> {
     Tendency save(Tendency tendency);
     List<Tendency> findAll();
 
+    List<Tendency> findAllByTypeId(Long type_id);
+
     @Query(value = "SELECT * FROM Tendency WHERE type_id = :type_id order by RAND() limit 1", nativeQuery = true)
     Optional<Tendency> findOne(@Param("type_id") Long type_id);
 }

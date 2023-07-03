@@ -26,6 +26,7 @@ public class TendencyService {
 
     private final TypeRepository typeRepository;
     private final TendencyRepository tendencyRepository;
+    private final Integer LENGTH = 10^8;
 
     public Object save(TendencyDto tendencyDto) {
 
@@ -57,12 +58,15 @@ public class TendencyService {
         }
 
         type = typeRepository.findByMbti(mbti.name()).get();
-        Optional<Tendency> tendency = tendencyRepository.findOne(type.getId());
-        if (tendency.isEmpty()) {
+
+        List<Tendency> tendency = tendencyRepository.findAllByTypeId(type.getId());
+        if (tendency.size() == 0) {
             return new TendencyResponse(ExceptionCode.CONTEXT_NOT_FOUND, mbti.name());
         }
-        tendency.get().addCount(); // transaction
-        return new OneTendencyResponse(ExceptionCode.SUCCESS, mbti, tendency.get());
+
+        int n = ((int) Math.random()*LENGTH) * tendency.size(); // 랜덤
+        tendency.get(n).addCount(); // transaction
+        return new OneTendencyResponse(ExceptionCode.SUCCESS, mbti, tendency.get(n));
     }
 
     public Object findAll() {
